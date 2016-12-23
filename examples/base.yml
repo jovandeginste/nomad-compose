@@ -1,0 +1,16 @@
+helloworld:
+  environment:
+    SERVICE_NAME: "helloworld"
+    SERVICE_80_TAGS: http
+    SERVICE_80_IPV6: tcp
+    SERVICE_80_CHECK_HTTP: /
+    SERVICE_80_CHECK_INTERVAL: 15s
+  labels:
+    nomad.count: 1
+    nomad.datacenters:
+      - mydc
+    nomad.constraints._cluster._type: constraint
+    nomad.constraints._cluster.attribute: '${meta.role}'
+    nomad.constraints._cluster.value: myrole
+    nomad.constraints._distinct._type: constraint
+    nomad.constraints._distinct.distinct_hosts: true

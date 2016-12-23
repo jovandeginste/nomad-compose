@@ -1,0 +1,6 @@
+http://*:80 {
+	log / stdout 
+	errors {
+		log stdout 
+	}
+}

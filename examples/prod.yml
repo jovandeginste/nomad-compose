@@ -1,0 +1,8 @@
+helloworld:
+  extends:
+    file: base.yml
+    service: helloworld
+  environment:
+    SERVICE_80_TAGS: "http,urlprefix-prod.helloworld.service.svcd/"
+  labels:
+    nomad.count: 3

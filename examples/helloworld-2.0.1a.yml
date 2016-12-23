@@ -1,0 +1,7 @@
+helloworld-2.0.1a-dev:
+  extends:
+    file: base.yml
+    service: helloworld
+  image: jovandeginste/hello:2.0.1a
+  environment:
+    SERVICE_80_TAGS: "http,urlprefix-dev.helloworld.service.svcd/2.0.1a strip=/2.0.1a"

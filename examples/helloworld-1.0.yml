@@ -1,0 +1,5 @@
+helloworld-prod:
+  extends:
+    file: prod.yml
+    service: helloworld
+  image: jovandeginste/hello:1.0
