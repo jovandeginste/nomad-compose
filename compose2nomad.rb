@@ -45,8 +45,8 @@ nomad_params = {
   'datacenters' => [],
 } + nomad_params.from_labels
 
-ports = {}
-network_ports = {}
+ports = nomad_params['ports'] ||= {}
+network_ports = nomad_params['network_ports'] ||= {}
 
 data['ports'].each do |port|
   src, dst = port.split(':').map(&:to_i)
@@ -64,47 +64,7 @@ data['ports'].each do |port|
   end
 end
 
-nomad_data = {
-  "#{service}" => {
-    _type: 'job',
-    datacenters: nomad_params['datacenters'],
-    update: {
-      stagger: '5s',
-      max_parallel: 1,
-    },
-  } + nomad_params['constraints'] + {
-    "#{service}" => {
-      _type: 'group',
-      count: nomad_params['count'],
-      restart: {
-	interval: '3m',
-	attempts: 10,
-	delay: '5s',
-	mode: 'delay',
-      },
-      "#{service}" => {
-	_type: 'task',
-	driver: 'docker',
-	config: {
-	  image: data['image'],
-	  port_map: ports,
-	  logging: {
-	    type: "journald"
-	  },
-	},
-	volumes: data['volumes'],
-	env: data['environment'],
-	resources: {
-	  memory: 50,
-	  cpu: 100,
-	  network: {
-	    mbits: 1,
-	  } + network_ports,
-	},
-      },
-    },
-  }
-}
+nomad_data = Nomad.generate_nomad_hcl(service, data, nomad_params)
 
 destination = "#{source.sub(/\.ya?ml$/, '')}.nomad"
 
