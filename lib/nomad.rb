@@ -3,7 +3,7 @@ class Nomad
     {
       'count' => 1,
       'constraints' => {},
-      'datacenters' => [],
+      'datacenters' => ['mydc'],
       'memory' => 50,
       'cpu' => 100,
       'network_mbits' => 1,
