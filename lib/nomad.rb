@@ -40,8 +40,8 @@ class Nomad
 		logging: {
 		  type: nomad_params['logging'],
 		},
+		volumes: compose_params['volumes'],
 	      },
-	      volumes: compose_params['volumes'],
 	      env: compose_params['environment'],
 	      resources: {
 		memory: nomad_params['memory'],

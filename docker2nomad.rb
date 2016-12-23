@@ -36,8 +36,8 @@ ports = nomad_params['ports'] ||= {}
 network_ports = nomad_params['network_ports'] ||= {}
 
 docker_data['HostConfig']['PortBindings'].each do |port, port_config|
-	src = port.split('/').first
-	dst = port_config.first['HostPort']
+  src = port.split('/').first
+  dst = port_config.first['HostPort']
   if dst and dst != ''
     ports["port_#{dst}"] = dst
     network_ports["port_#{dst}"] = {
@@ -52,6 +52,11 @@ docker_data['HostConfig']['PortBindings'].each do |port, port_config|
   end
 end
 
+volumes = data['volumes'] ||= []
+docker_data['Mounts'].each do |mount|
+  volumes << "#{mount['Source']}:#{mount['Destination']}:#{mount['RW'] ? 'rw' : 'ro'}"
+end
+
 nomad_data = Nomad.generate_nomad_hcl(source, data, nomad_params)
 
 destination = "#{source}.nomad"
@@ -59,11 +64,11 @@ destination = "#{source}.nomad"
 puts "Converting #{source} to #{destination}..."
 
 if DEBUG
-puts "Compose data:"
-puts docker_data.to_yaml
+  puts "Compose data:"
+  puts docker_data.to_yaml
 
-puts "This is the nomad_data:"
-puts nomad_data.to_hcl
+  puts "This is the nomad_data:"
+  puts nomad_data.to_hcl
 end
 
 File.write destination, nomad_data.to_hcl
