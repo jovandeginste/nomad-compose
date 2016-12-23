@@ -5,7 +5,7 @@ require 'json'
 
 path = File.dirname(__FILE__)
 
-Dir.glob(File.join(path, 'lib', '*.rb')).each{|f| load "./#{f}"}
+Dir.glob(File.join(path, 'lib', '*.rb')).each{|f| load f}
 
 DEBUG = false
 
