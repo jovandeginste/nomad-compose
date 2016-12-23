@@ -58,4 +58,10 @@ class Hash
     end
     return result
   end
+
+  def from_data
+    {
+      'logging' => self['HostConfig']['LogConfig']['Type'],
+    }
+  end
 end

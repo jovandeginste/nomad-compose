@@ -36,8 +36,9 @@ class Nomad
 		command: compose_params['command'],
 		entrypoint: compose_params['entrypoint'],
 		port_map: nomad_params['ports'],
+		labels: compose_params['labels'],
 		logging: {
-		  type: "journald"
+		  type: nomad_params['logging'],
 		},
 	      },
 	      volumes: compose_params['volumes'],
