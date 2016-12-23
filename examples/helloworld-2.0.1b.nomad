@@ -1,6 +1,6 @@
 job "helloworld-2.0.1b-dev" {
   datacenters = [
-    "icts",
+    "mydc",
   ]
   update {
     stagger = "5s"
@@ -8,7 +8,7 @@ job "helloworld-2.0.1b-dev" {
   }
   constraint {
     attribute = "${meta.role}"
-    value = "kstest"
+    value = "myrole"
   }
   constraint {
     distinct_hosts = true
