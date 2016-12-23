@@ -59,7 +59,12 @@ class Hash
     return result
   end
 
-  def from_data
+  def from_compose_data
+    {
+    }
+  end
+
+  def from_docker_data
     {
       'logging' => self['HostConfig']['LogConfig']['Type'],
     }

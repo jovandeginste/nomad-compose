@@ -30,7 +30,7 @@ data['labels'].each do |key, value|
   nomad_params[key.sub(/^nomad\./, '')] = value
 end
 
-nomad_params = Nomad.defaults + nomad_params.from_labels + docker_data.from_data
+nomad_params = Nomad.defaults + nomad_params.from_labels + docker_data.from_docker_data
 
 ports = nomad_params['ports'] ||= {}
 network_ports = nomad_params['network_ports'] ||= {}
