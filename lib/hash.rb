@@ -37,7 +37,11 @@ class Hash
 	  result << "}"
 	end
       else
-	result << "#{key} = #{value.to_hcl}"
+	if value == ''
+	  # nothing
+	else
+	  result << "#{key} = #{value.to_hcl}"
+	end
       end
     end
     return result.join("\n")

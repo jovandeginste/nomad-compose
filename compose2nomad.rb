@@ -39,11 +39,7 @@ data['labels'].each do |key, value|
   nomad_params[key.sub(/^nomad\./, '')] = value
 end
 
-nomad_params = {
-  'count' => 1,
-  'constraints' => {},
-  'datacenters' => [],
-} + nomad_params.from_labels
+nomad_params = Nomad.defaults + nomad_params.from_labels
 
 ports = nomad_params['ports'] ||= {}
 network_ports = nomad_params['network_ports'] ||= {}
@@ -73,7 +69,6 @@ puts "Converting #{source} to #{destination}..."
 if DEBUG
 puts "Compose data:"
 puts compose_data.to_yaml
-
 
 puts "This is the nomad_data:"
 puts nomad_data.to_hcl

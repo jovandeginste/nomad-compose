@@ -1,4 +1,14 @@
 class Nomad
+  def self.defaults
+    {
+      'count' => 1,
+      'constraints' => {},
+      'datacenters' => [],
+      'memory' => 50,
+      'cpu' => 100,
+      'network_mbits' => 1,
+    }
+  end
   def self.generate_nomad_hcl(service, compose_params, nomad_params)
     {
       "#{service}" => {
@@ -23,6 +33,8 @@ class Nomad
 	      driver: 'docker',
 	      config: {
 		image: compose_params['image'],
+		command: compose_params['command'],
+		entrypoint: compose_params['entrypoint'],
 		port_map: nomad_params['ports'],
 		logging: {
 		  type: "journald"
@@ -31,10 +43,10 @@ class Nomad
 	      volumes: compose_params['volumes'],
 	      env: compose_params['environment'],
 	      resources: {
-		memory: 50,
-		cpu: 100,
+		memory: nomad_params['memory'],
+		cpu: nomad_params['cpu'],
 		network: {
-		  mbits: 1,
+		  mbits: nomad_params['network_mbits'],
 		} + nomad_params['network_ports'],
 	      },
 	    },
