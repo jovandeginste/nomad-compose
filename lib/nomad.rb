@@ -1,11 +1,8 @@
 class Nomad
   def self.defaults
     {
-      'count' => 1,
       'constraints' => {},
       'datacenters' => ['mydc'],
-      'memory' => 1024,
-      'cpu' => 1024,
       'network_mbits' => 1,
     }
   end
