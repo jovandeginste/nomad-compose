@@ -14,3 +14,9 @@ helloworld:
     nomad.constraints._cluster.value: myrole
     nomad.constraints._distinct._type: constraint
     nomad.constraints._distinct.distinct_hosts: true
+    nomad.update.stagger: 5s
+    nomad.update.max_parallel: 1
+    nomad.restart.interval: 3m
+    nomad.restart.attempts: 10
+    nomad.restart.delay: 5s
+    nomad.restart.mode: delay

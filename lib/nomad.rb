@@ -9,33 +9,31 @@ class Nomad
       'network_mbits' => 1,
     }
   end
+  def self.make_command(params)
+    command = params['command']
+    entrypoint = params['entrypoint']
+
+    return "#{entrypoint} #{command}".strip
+  end
   def self.generate_nomad_hcl(service, compose_params, nomad_params)
     {
       "#{service}" => {
 	_type: 'job',
 	type: nomad_params['job_type'],
 	datacenters: nomad_params['datacenters'],
-	update: {
-	  stagger: '5s',
-	  max_parallel: 1,
-	},
+	update: nomad_params['update'],
 	periodic: nomad_params['periodic'],
       } + nomad_params['constraints'] + {
 	  "#{service}" => {
 	    _type: 'group',
 	    count: nomad_params['count'],
-	    restart: {
-	      interval: '3m',
-	      attempts: 10,
-	      delay: '5s',
-	      mode: 'delay',
-	    },
+	    restart: nomad_params['restart'],
 	    "#{service}" => {
 	      _type: 'task',
 	      driver: 'docker',
 	      config: {
 		image: compose_params['image'],
-		command: compose_params['command'] || compose_params['entrypoint'],
+		command: self.make_command(compose_params),
 		port_map: nomad_params['ports'],
 		labels: compose_params['labels'],
 		logging: {
