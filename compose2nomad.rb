@@ -14,26 +14,40 @@ unless source = ARGV.shift
   exit 1
 end
 
-service = ARGV.shift
-
 def load_compose(file, service = nil)
-  input = YAML.load(File.read(file))
+  if file == '-'
+    input = YAML.load(STDIN.read)
+  else
+    input = YAML.load(File.read(file))
+  end
 
   service ||= input.keys.first
   result = input[service]
 
   if extends = result.delete('extends')
-    result.level_merge(load_compose(extends['file'], extends['service'])['data'])
+    load_file = File.absolute_path(extends['file'], File.dirname(file))
+    if File.exist?(load_file)
+      puts "Loading file '#{load_file}'..."
+      result.level_merge(load_compose(load_file, extends['service'])['data'])
+    else
+      puts "Could not load file '#{load_file}' -- does not exist."
+    end
   end
 
   return {'service' => service, 'data' => result}
 end
 
 compose_data = load_compose(source)
+
+ARGV.each do |other_source|
+  compose_data['data'].level_merge(load_compose(other_source)['data'])
+end
+
 service = compose_data['service']
 data = compose_data['data']
 data['ports'] ||= {}
 nomad_params = {}
+data['labels'] ||= {}
 data['labels'].each do |key, value|
   next unless key.match(/^nomad\./)
   nomad_params[key.sub(/^nomad\./, '')] = value
@@ -64,7 +78,7 @@ nomad_data = Nomad.generate_nomad_hcl(service, data, nomad_params)
 
 destination = "#{source.sub(/\.ya?ml$/, '')}.nomad"
 
-puts "Converting #{source} to #{destination}..."
+puts "Converting #{source} to #{destination} ..."
 
 if DEBUG
 puts "Compose data:"

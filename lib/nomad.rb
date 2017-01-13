@@ -4,8 +4,8 @@ class Nomad
       'count' => 1,
       'constraints' => {},
       'datacenters' => ['mydc'],
-      'memory' => 50,
-      'cpu' => 100,
+      'memory' => 1024,
+      'cpu' => 1024,
       'network_mbits' => 1,
     }
   end
@@ -13,11 +13,13 @@ class Nomad
     {
       "#{service}" => {
 	_type: 'job',
+	type: nomad_params['job_type'],
 	datacenters: nomad_params['datacenters'],
 	update: {
 	  stagger: '5s',
 	  max_parallel: 1,
 	},
+	periodic: nomad_params['periodic'],
       } + nomad_params['constraints'] + {
 	  "#{service}" => {
 	    _type: 'group',
@@ -33,8 +35,7 @@ class Nomad
 	      driver: 'docker',
 	      config: {
 		image: compose_params['image'],
-		command: compose_params['command'],
-		entrypoint: compose_params['entrypoint'],
+		command: compose_params['command'] || compose_params['entrypoint'],
 		port_map: nomad_params['ports'],
 		labels: compose_params['labels'],
 		logging: {

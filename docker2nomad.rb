@@ -39,10 +39,10 @@ docker_data['HostConfig']['PortBindings'].each do |port, port_config|
   src = port.split('/').first
   dst = port_config.first['HostPort']
   if dst and dst != ''
-    ports["port_#{dst}"] = dst
-    network_ports["port_#{dst}"] = {
+    ports["port_#{src}"] = src
+    network_ports["port_#{src}"] = {
       _type: 'port',
-      static: src,
+      static: dst,
     }
   else
     ports["port_#{src}"] = src
