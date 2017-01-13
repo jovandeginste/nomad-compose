@@ -6,12 +6,6 @@ class Nomad
       'network_mbits' => 1,
     }
   end
-  def self.make_command(params)
-    command = params['command']
-    entrypoint = params['entrypoint']
-
-    return "#{entrypoint} #{command}".strip
-  end
   def self.generate_nomad_hcl(service, compose_params, nomad_params)
     {
       "#{service}" => {
@@ -30,7 +24,8 @@ class Nomad
 	      driver: 'docker',
 	      config: {
 		image: compose_params['image'],
-		command: self.make_command(compose_params),
+		command: compose_params['entrypoint'],
+		args: compose_params['command'].to_a,
 		port_map: nomad_params['ports'],
 		labels: compose_params['labels'],
 		logging: {
