@@ -7,7 +7,7 @@ path = File.dirname(__FILE__)
 
 Dir.glob(File.join(path, 'lib', '*.rb')).each{|f| load f}
 
-DEBUG = false
+DEBUG = true
 
 unless source = ARGV.shift
   puts "Usage: #{$0} filename.yml service(optional)"
@@ -19,6 +19,11 @@ def load_compose(file, service = nil)
     input = YAML.load(STDIN.read)
   else
     input = YAML.load(File.read(file))
+  end
+
+  # Delete docker-compose protected root keys
+  ["networks", "version", "volumes", "configs"].each do |key|
+    input.delete(key)
   end
 
   if input['services']
