@@ -7,10 +7,10 @@ path = File.dirname(__FILE__)
 
 Dir.glob(File.join(path, 'lib', '*.rb')).each{|f| load f}
 
-DEBUG = false
+DEBUG = true
 
 unless source = ARGV.shift
-  puts "Usage: #{$0} filename.yml"
+  puts "Usage: #{$0} filename.yml service(optional)"
   exit 1
 end
 
@@ -21,7 +21,22 @@ def load_compose(file, service = nil)
     input = YAML.load(File.read(file))
   end
 
-  service ||= input.keys.first
+  # Delete docker-compose protected root keys
+  ["networks", "version", "volumes", "configs"].each do |key|
+    input.delete(key)
+  end
+
+  if input['services']
+    input = input['services']
+  end
+
+  # If no service is defined, just take the first one
+  unless service = ARGV[0]
+    service ||= input.keys.first
+  end
+
+  puts "Service: #{service}"
+
   result = input[service]
 
   if extends = result.delete('extends')
@@ -38,10 +53,6 @@ def load_compose(file, service = nil)
 end
 
 compose_data = load_compose(source)
-
-ARGV.each do |other_source|
-  compose_data['data'].level_merge(load_compose(other_source)['data'])
-end
 
 service = compose_data['service']
 data = compose_data['data']
